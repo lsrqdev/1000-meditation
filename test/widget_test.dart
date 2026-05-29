@@ -16,7 +16,7 @@ void main() {
 
       expect(find.textContaining('Build from 3 to 30 minutes'), findsOneWidget);
       expect(find.textContaining('Tap the orb'), findsOneWidget);
-      expect(find.text('Got it'), findsOneWidget);
+      expect(find.text('Begin'), findsOneWidget);
     });
 
     testWidgets('Skips onboarding when already seen', (

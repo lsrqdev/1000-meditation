@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../painters/painters.dart';
 import '../visual_spec.dart';
 import 'orb_view.dart';
 
@@ -77,15 +75,11 @@ class OrbSection extends StatelessWidget {
     final remainingText = _formatRemaining(remainingSeconds);
     final numeralText = isRunning
         ? remainingText
-        : (isCompletionHold ? 'Done' : '$targetMinutes');
+        : (isCompletionHold ? '✓' : '$targetMinutes');
     final numeralSize = (isRunning || isCompletionHold)
         ? VisualSpec.runningNumeralSize(orbDiameter)
         : VisualSpec.idleNumeralSize(orbDiameter);
-    final numeralOpacity = isRunning
-        ? (isLuminanceReduced ? 0.75 : 0.9)
-        : (isCompletionHold
-              ? (isLuminanceReduced ? 0.6 : 0.75)
-              : (isLuminanceReduced ? 0.35 : 0.6));
+    final numeralOpacity = isLuminanceReduced ? 0.72 : 0.82;
 
     return Stack(
       children: [
@@ -128,34 +122,35 @@ class OrbSection extends StatelessWidget {
               width: orbDiameter,
               height: orbDiameter,
               child: Center(
-                child: Text(
-                  numeralText,
-                  style: GoogleFonts.cormorantGaramond(
-                    fontSize: numeralSize,
-                    fontWeight: FontWeight.w700,
-                    color:
-                        (isRunning || isCompletionHold
-                                ? accentColor
-                                : Colors.white)
-                            .withOpacity(numeralOpacity),
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                    shadows: [
-                      // Subtle shadow for better contrast against orb
-                      Shadow(
-                        color: Colors.black.withOpacity(0.3),
-                        offset: const Offset(0, 2),
-                        blurRadius: 4,
+                child: Transform.translate(
+                  offset: Offset(0, isRunning ? 0 : -3),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        numeralText,
+                        style: GoogleFonts.cormorantGaramond(
+                          fontSize: numeralSize,
+                          height: 0.88,
+                          fontWeight: FontWeight.w300,
+                          color: VisualSpec.numeralInk.withOpacity(
+                            numeralOpacity,
+                          ),
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
                       ),
-                      // Inner glow for depth
-                      Shadow(
-                        color:
-                            (isRunning || isCompletionHold
-                                    ? accentColor
-                                    : Colors.white)
-                                .withOpacity(0.2),
-                        offset: Offset.zero,
-                        blurRadius: 8,
-                      ),
+                      if (!isRunning && !isCompletionHold) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          'MIN',
+                          style: GoogleFonts.manrope(
+                            fontSize: _clamp(9.0, orbDiameter * 0.044, 12.0),
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2.8,
+                            color: VisualSpec.numeralInk.withOpacity(0.48),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -169,18 +164,17 @@ class OrbSection extends StatelessWidget {
           Positioned(
             left: 0,
             right: 0,
-            top: orbCenter.dy + orbDiameter * 0.22,
+            top: orbCenter.dy + orbDiameter * 0.69,
             child: Text(
               statusText!,
               textAlign: TextAlign.center,
               style: GoogleFonts.manrope(
                 fontSize: _clamp(10.0, orbDiameter * 0.045, 13.0),
-                fontWeight: FontWeight.w700,
-                color:
-                    (showCompletedNotice || showCompletionCopy
-                            ? accentColor
-                            : Colors.white)
-                        .withOpacity(isLuminanceReduced ? 0.6 : 0.75),
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.2,
+                color: VisualSpec.ink.withOpacity(
+                  isLuminanceReduced ? 0.56 : 0.68,
+                ),
               ),
             ),
           ),

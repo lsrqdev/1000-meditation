@@ -101,14 +101,14 @@ class _OrbViewState extends State<OrbView> with SingleTickerProviderStateMixin {
                 : (math.sin(time) * amplitude +
                       math.sin(time * 0.5) * amplitude * 0.25);
 
-            // Breathing effect (different for running vs idle)
+            // Breathing effect
             final breath = (widget.reduceMotion || widget.isLuminanceReduced)
                 ? 1.0
                 : (widget.isRunning
-                      ? 1.0 + math.sin(time) * 0.007
+                      ? 1.0 + math.sin(time) * 0.006
                       : (widget.completionHold
                             ? 1.0
-                            : 1.0 + math.sin(time * 0.6) * 0.012));
+                            : 1.009 + math.sin(time) * 0.009));
 
             // Press feedback
             final pressScale = widget.isPressed ? 0.985 : 1.0;
@@ -141,8 +141,8 @@ class _OrbViewState extends State<OrbView> with SingleTickerProviderStateMixin {
     final celebrationStrength = widget.completionHold ? 1.0 : completion;
     final ringDiameter = VisualSpec.progressRingDiameter(diameter);
     final ringLineWidth = VisualSpec.progressRingLineWidth(diameter);
-    final ringTrackOpacity = widget.isLuminanceReduced ? 0.28 : 0.35;
-    final ringProgressOpacity = widget.isLuminanceReduced ? 0.78 : 0.85;
+    final ringTrackOpacity = widget.isLuminanceReduced ? 0.18 : 0.14;
+    final ringProgressOpacity = widget.isLuminanceReduced ? 0.72 : 0.86;
     final completionScale = (widget.reduceMotion || widget.isLuminanceReduced)
         ? 1.0
         : 1.0 + 0.12 * completion;
@@ -183,7 +183,7 @@ class _OrbViewState extends State<OrbView> with SingleTickerProviderStateMixin {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: widget.accentColor.withOpacity(0.25),
+                  color: VisualSpec.ink.withOpacity(0.18),
                   blurRadius: diameter * 0.12,
                   spreadRadius: diameter * 0.02,
                 ),
@@ -217,7 +217,7 @@ class _OrbViewState extends State<OrbView> with SingleTickerProviderStateMixin {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: widget.accentColor.withOpacity(0.8 * completion),
+                  color: VisualSpec.ink.withOpacity(0.58 * completion),
                   width: diameter * 0.025,
                 ),
               ),
@@ -233,7 +233,7 @@ class _OrbViewState extends State<OrbView> with SingleTickerProviderStateMixin {
             child: Icon(
               Icons.check,
               size: diameter * 0.18,
-              color: widget.accentColor.withOpacity(0.92),
+              color: VisualSpec.numeralInk.withOpacity(0.74),
             ),
           ),
         ),

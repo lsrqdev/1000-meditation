@@ -1,22 +1,21 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:onetoten_mobile/visual_spec.dart';
 
 void main() {
   group('VisualSpec', () {
     group('orbDiameter', () {
-      test('returns 68% of smaller dimension', () {
-        expect(VisualSpec.orbDiameter(100, 200), 68.0);
-        expect(VisualSpec.orbDiameter(200, 100), 68.0);
-        expect(VisualSpec.orbDiameter(100, 100), 68.0);
+      test('returns 68% of smaller dimension within design bounds', () {
+        expect(VisualSpec.orbDiameter(100, 200), 220.0);
+        expect(VisualSpec.orbDiameter(400, 800), 272.0);
+        expect(VisualSpec.orbDiameter(1000, 1000), 420.0);
       });
     });
 
     group('orbCenter', () {
-      test('centers horizontally at 46% height', () {
+      test('centers horizontally at 47% height', () {
         final center = VisualSpec.orbCenter(200, 400);
         expect(center.dx, 100.0); // 50% of 200
-        expect(center.dy, 184.0); // 46% of 400
+        expect(center.dy, 188.0); // 47% of 400
       });
     });
 
@@ -60,19 +59,20 @@ void main() {
 
     group('phaseAccent', () {
       test('returns correct color for phase index', () {
-        expect(VisualSpec.phaseAccent(0), const Color(0xFF76C5C8));
-        expect(VisualSpec.phaseAccent(8), const Color(0xFFE07E5F));
+        expect(VisualSpec.phaseAccent(0), VisualSpec.warmPhaseBase);
+        expect(VisualSpec.phaseAccent(8), VisualSpec.ink);
       });
 
       test('clamps index to valid range', () {
-        expect(VisualSpec.phaseAccent(-1), const Color(0xFF76C5C8));
-        expect(VisualSpec.phaseAccent(100), const Color(0xFFE07E5F));
+        expect(VisualSpec.phaseAccent(-1), VisualSpec.warmPhaseBase);
+        expect(VisualSpec.phaseAccent(100), VisualSpec.ink);
       });
 
-      test('reduces opacity when luminance reduced', () {
+      test('dims toward the background when luminance reduced', () {
         final normal = VisualSpec.phaseAccent(0);
         final reduced = VisualSpec.phaseAccent(0, isLuminanceReduced: true);
-        expect(reduced.opacity, closeTo(0.6, 0.01));
+        expect(reduced.opacity, closeTo(1.0, 0.01));
+        expect(reduced.computeLuminance(), lessThan(normal.computeLuminance()));
       });
     });
 

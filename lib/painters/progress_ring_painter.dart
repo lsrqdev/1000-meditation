@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../visual_spec.dart';
+
 /// A custom painter that draws a circular progress ring.
 ///
 /// Displays a track ring and a progress arc that fills as the session
@@ -39,13 +41,13 @@ class ProgressRingPainter extends CustomPainter {
     const startAngle = -math.pi / 2;
 
     final trackPaint = Paint()
-      ..color = Colors.white.withOpacity(trackOpacity)
+      ..color = VisualSpec.ink.withOpacity(trackOpacity)
       ..style = PaintingStyle.stroke
       ..strokeWidth = lineWidth
       ..strokeCap = StrokeCap.round;
 
     final progressPaint = Paint()
-      ..color = accentColor.withOpacity(progressOpacity)
+      ..color = VisualSpec.ink.withOpacity(progressOpacity)
       ..style = PaintingStyle.stroke
       ..strokeWidth = lineWidth
       ..strokeCap = StrokeCap.round;

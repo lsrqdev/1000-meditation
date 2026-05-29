@@ -136,15 +136,15 @@ class WeekDotsArcPainter extends CustomPainter {
     final progressRadius = arcRadius + dotSize * 1.6;
     final pulse = milestonePulse.clamp(0.0, 1.0).toDouble();
     final pulseBoost = math.sin(pulse * math.pi);
-    final milestoneActiveOpacity = isLuminanceReduced ? 0.62 : 0.78;
-    final milestoneIdleOpacity = isLuminanceReduced ? 0.2 : 0.25;
-    final progressOpacity = isLuminanceReduced ? 0.7 : 0.9;
-    final guideOpacity = isLuminanceReduced ? 0.12 : 0.08;
-    final streakOpacity = isLuminanceReduced ? 0.2 : 0.24;
-    final dotIdleOpacity = isLuminanceReduced ? 0.3 : 0.22;
-    final dotCompletedOpacity = isLuminanceReduced ? 0.8 : 0.75;
-    final todayRingOpacity = isLuminanceReduced ? 0.85 : 0.9;
-    final todayIdleOpacity = isLuminanceReduced ? 0.3 : 0.24;
+    final milestoneActiveOpacity = isLuminanceReduced ? 0.58 : 0.72;
+    final milestoneIdleOpacity = isLuminanceReduced ? 0.16 : 0.20;
+    final progressOpacity = isLuminanceReduced ? 0.66 : 0.82;
+    final guideOpacity = isLuminanceReduced ? 0.10 : 0.08;
+    final streakOpacity = isLuminanceReduced ? 0.18 : 0.22;
+    final dotIdleOpacity = isLuminanceReduced ? 0.28 : 0.22;
+    final dotCompletedOpacity = isLuminanceReduced ? 0.74 : 0.84;
+    final todayRingOpacity = isLuminanceReduced ? 0.74 : 0.88;
+    final todayIdleOpacity = isLuminanceReduced ? 0.28 : 0.24;
     final programLabelOpacity = isLuminanceReduced ? 0.55 : 0.65;
     final programLabelSize = math.max(8.0, dotSize * 1.2);
     final programLabelRadius = arcRadius + dotSize * 2.8;
@@ -246,7 +246,7 @@ class WeekDotsArcPainter extends CustomPainter {
     double opacity,
   ) {
     final guidePaint = Paint()
-      ..color = Colors.white.withOpacity(opacity)
+      ..color = VisualSpec.ink.withOpacity(opacity)
       ..style = PaintingStyle.stroke
       ..strokeWidth = lineWidth
       ..strokeCap = StrokeCap.round;
@@ -296,7 +296,7 @@ class WeekDotsArcPainter extends CustomPainter {
       }
     }
     final streakPaint = Paint()
-      ..color = Colors.white.withOpacity(opacity)
+      ..color = VisualSpec.ink.withOpacity(opacity)
       ..style = PaintingStyle.stroke
       ..strokeWidth = lineWidth * 1.6
       ..strokeCap = StrokeCap.round;
@@ -325,7 +325,7 @@ class WeekDotsArcPainter extends CustomPainter {
       final size = dotSize * (isActive ? (0.45 + 0.1 * pulseBoost) : 0.3);
 
       final paint = Paint()
-        ..color = (isActive ? accentColor : Colors.white).withOpacity(
+        ..color = VisualSpec.ink.withOpacity(
           isActive ? activeOpacity : idleOpacity,
         );
       canvas.drawCircle(Offset(x, y), size / 2, paint);
@@ -346,7 +346,7 @@ class WeekDotsArcPainter extends CustomPainter {
     final progressX = center.dx + math.cos(progressAngle) * radius;
     final progressY = center.dy - math.sin(progressAngle) * radius;
     final paint = Paint()
-      ..color = accentColor.withOpacity(opacity)
+      ..color = VisualSpec.ink.withOpacity(opacity)
       ..style = PaintingStyle.stroke
       ..strokeWidth = dotSize * 0.2;
     canvas.drawCircle(Offset(progressX, progressY), dotSize * 0.45, paint);
@@ -366,7 +366,7 @@ class WeekDotsArcPainter extends CustomPainter {
       text: TextSpan(
         text: 'Day $programDayIndex',
         style: TextStyle(
-          color: Colors.white.withOpacity(opacity),
+          color: VisualSpec.ink.withOpacity(opacity),
           fontSize: fontSize,
           fontWeight: FontWeight.w600,
         ),
@@ -407,7 +407,7 @@ class WeekDotsArcPainter extends CustomPainter {
 
       if (isToday) {
         final ringPaint = Paint()
-          ..color = (isCompleted ? accentColor : Colors.white).withOpacity(
+          ..color = VisualSpec.ink.withOpacity(
             isCompleted ? todayRingOpacity : 0.65,
           )
           ..style = PaintingStyle.stroke
@@ -415,17 +415,17 @@ class WeekDotsArcPainter extends CustomPainter {
         canvas.drawCircle(Offset(x, y), todayRingSize / 2, ringPaint);
         if (isCompleted) {
           final dotPaint = Paint()
-            ..color = Colors.white.withOpacity(0.92)
+            ..color = VisualSpec.ink.withOpacity(0.92)
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.4);
           canvas.drawCircle(Offset(x, y), dotSize / 2, dotPaint);
         } else {
           final dotPaint = Paint()
-            ..color = Colors.white.withOpacity(todayIdleOpacity);
+            ..color = VisualSpec.ink.withOpacity(todayIdleOpacity);
           canvas.drawCircle(Offset(x, y), dotSize / 2, dotPaint);
         }
       } else {
         final dotPaint = Paint()
-          ..color = Colors.white.withOpacity(
+          ..color = VisualSpec.ink.withOpacity(
             isCompleted ? completedOpacity : idleOpacity,
           );
         canvas.drawCircle(Offset(x, y), dotSize / 2, dotPaint);

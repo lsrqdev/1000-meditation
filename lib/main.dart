@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'screens/main_screen.dart';
 import 'services/notifications_service.dart';
+import 'visual_spec.dart';
 
 /// The entry point for the 1000 app.
 ///
@@ -43,26 +44,27 @@ class ThousandApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: Colors.black,
+        scaffoldBackgroundColor: VisualSpec.bg,
         useMaterial3: true,
         textTheme: GoogleFonts.manropeTextTheme().apply(
-          bodyColor: Colors.white,
-          displayColor: Colors.white,
+          bodyColor: VisualSpec.ink,
+          displayColor: VisualSpec.ink,
         ),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF76C5C8),
+          seedColor: VisualSpec.ink,
           brightness: Brightness.dark,
+          surface: VisualSpec.surface,
         ),
         dialogTheme: DialogThemeData(
-          backgroundColor: const Color(0xFF101010),
+          backgroundColor: VisualSpec.surface,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(22),
           ),
         ),
         bottomSheetTheme: const BottomSheetThemeData(
-          backgroundColor: Color(0xFF101010),
+          backgroundColor: VisualSpec.surface,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
           ),
         ),
       ),

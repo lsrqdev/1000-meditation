@@ -1,6 +1,6 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+
+import '../visual_spec.dart';
 
 /// A custom painter that draws the main meditation orb body.
 ///
@@ -38,23 +38,20 @@ class OrbBodyPainter extends CustomPainter {
     final radius = diameter / 2;
 
     // Opacity values based on accessibility settings
-    final rimLineWidth = diameter * (isLuminanceReduced ? 0.046 : 0.045);
-    final rimInnerOpacity = isLuminanceReduced ? 0.28 : 0.25;
-    final soulOpacity = isLuminanceReduced ? 0.35 : 0.6;
-    final highlightOpacity = isLuminanceReduced ? 0.18 : 0.35;
-    final overlayShade = isLuminanceReduced ? 0.1 : 0.18;
+    final rimLineWidth = diameter * (isLuminanceReduced ? 0.036 : 0.034);
+    final rimInnerOpacity = isLuminanceReduced ? 0.22 : 0.18;
+    final soulOpacity = isLuminanceReduced ? 0.22 : 0.38;
+    final highlightOpacity = isLuminanceReduced ? 0.16 : 0.28;
+    final overlayShade = isLuminanceReduced ? 0.08 : 0.14;
 
     final rect = Offset.zero & size;
 
-    // Base gradient (light gray sphere)
+    // Base gradient (warm pearl sphere)
     final baseGradient = RadialGradient(
       center: const Alignment(-0.6, -0.6),
       radius: 0.9,
-      colors: const [
-        Color.fromRGBO(250, 250, 250, 1),
-        Color.fromRGBO(235, 235, 235, 1),
-        Color.fromRGBO(220, 220, 220, 1),
-      ],
+      colors: VisualSpec.pearlGradient,
+      stops: const [0.0, 0.58, 1.0],
     ).createShader(rect);
 
     final basePaint = Paint()..shader = baseGradient;
@@ -80,7 +77,10 @@ class OrbBodyPainter extends CustomPainter {
       ..shader = LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Colors.white.withOpacity(0.85), Colors.white.withOpacity(0.1)],
+        colors: [
+          VisualSpec.ink.withOpacity(0.58),
+          VisualSpec.bgFloor.withOpacity(0.08),
+        ],
       ).createShader(rect)
       ..style = PaintingStyle.stroke
       ..strokeWidth = rimLineWidth;
@@ -88,20 +88,20 @@ class OrbBodyPainter extends CustomPainter {
 
     // Inner rim line
     final innerRimPaint = Paint()
-      ..color = Colors.white.withOpacity(rimInnerOpacity)
+      ..color = VisualSpec.ink.withOpacity(rimInnerOpacity)
       ..style = PaintingStyle.stroke
       ..strokeWidth = diameter * 0.01;
     canvas.drawCircle(center, radius - rimLineWidth, innerRimPaint);
 
     // Soul (inner glow with parallax)
     final soulCenter = center + parallaxOffset;
-    final soulRadius = diameter * 0.275;
+    final soulRadius = diameter * (0.23 + progress.clamp(0.0, 1.0) * 0.08);
     final soulColor = isLuminanceReduced
-        ? accentColor.withOpacity(0.65)
+        ? Color.lerp(accentColor, VisualSpec.bg, 0.28)!
         : accentColor;
     final soulGradient = RadialGradient(
       colors: [
-        soulColor.withOpacity(0.9 * soulOpacity),
+        soulColor.withOpacity(0.72 * soulOpacity),
         soulColor.withOpacity(0.05 * soulOpacity),
       ],
     ).createShader(Rect.fromCircle(center: soulCenter, radius: soulRadius));
@@ -115,7 +115,7 @@ class OrbBodyPainter extends CustomPainter {
 
     // Specular highlight
     final highlightPaint = Paint()
-      ..color = Colors.white.withOpacity(highlightOpacity)
+      ..color = VisualSpec.ink.withOpacity(highlightOpacity)
       ..blendMode = BlendMode.screen
       ..maskFilter = MaskFilter.blur(BlurStyle.normal, diameter * 0.03);
     canvas.drawCircle(

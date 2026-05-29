@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../visual_spec.dart';
+
 /// A pill-shaped widget displaying weekly completion stats and current streak.
 ///
 /// Shows "This week X/Y" and "Streak Y days" with accent color highlighting
@@ -29,31 +31,28 @@ class WeeklyProgressPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final streakLabel = streakLength == 1 ? '1 day' : '$streakLength days';
-
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.62),
+        color: VisualSpec.surface.withOpacity(0.68),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: Colors.white.withOpacity(0.18), width: 1),
+        border: Border.all(color: VisualSpec.hairWithOpacity(1.35), width: 1),
       ),
       child: RichText(
         text: TextSpan(
           style: GoogleFonts.manrope(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: Colors.white.withOpacity(0.88),
-            letterSpacing: 0.1,
+            fontSize: 10.5,
+            fontWeight: FontWeight.w600,
+            color: VisualSpec.ink.withOpacity(0.84),
+            letterSpacing: 2.2,
           ),
           children: [
-            const TextSpan(text: 'This week '),
             TextSpan(
               text: '$weeklyCompletions/$weeklyTargetDays',
-              style: TextStyle(color: accentColor.withOpacity(0.92)),
+              style: TextStyle(color: VisualSpec.ink.withOpacity(0.96)),
             ),
-            const TextSpan(text: '  |  Streak '),
-            TextSpan(text: streakLabel),
+            const TextSpan(text: ' WK · '),
+            TextSpan(text: '$streakLength DAY STREAK'),
           ],
         ),
       ),

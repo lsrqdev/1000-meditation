@@ -10,30 +10,56 @@ import 'package:flutter/material.dart';
 class VisualSpec {
   VisualSpec._(); // Prevent instantiation
 
+  // Core monochrome palette
+  static const Color bg = Color(0xFF0A0908);
+  static const Color bg2 = Color(0xFF0E0C0B);
+  static const Color bgFloor = Color(0xFF050505);
+  static const Color ink = Color(0xFFF3EEE5);
+  static const Color surface = Color(0xFF121110);
+  static const Color numeralInk = Color(0xD1161411);
+  static const Color danger = Color(0xFFE9B5A3);
+  static const Color pearlTop = Color(0xFFECE7DD);
+  static const Color pearlMid = Color(0xFFC3BDB1);
+  static const Color pearlLow = Color(0xFF948D80);
+  static const Color warmPhaseBase = Color(0xFFB8B3A8);
+
   // Animation
   /// Period of the levitation animation in seconds.
   static const double levitationPeriod = 8.0;
 
   // Arc geometry (degrees)
   /// Start angle of the weekly progress arc.
-  static const double habitArcStartDeg = 200;
+  static const double habitArcStartDeg = 234;
 
   /// End angle of the weekly progress arc.
-  static const double habitArcEndDeg = 340;
+  static const double habitArcEndDeg = 306;
 
   // Phase accent colors
-  /// Accent colors for each of the 9 program phases.
-  static const List<Color> phaseAccents = [
-    Color(0xFF76C5C8), // Phase 1: Soft teal
-    Color(0xFF6AB8D6), // Phase 2: Sky blue
-    Color(0xFF78C2A1), // Phase 3: Mint green
-    Color(0xFF8FC16C), // Phase 4: Lime green
-    Color(0xFFC0B566), // Phase 5: Olive gold
-    Color(0xFFD1A86B), // Phase 6: Golden
-    Color(0xFFD89A69), // Phase 7: Orange
-    Color(0xFFDE8B64), // Phase 8: Coral
-    Color(0xFFE07E5F), // Phase 9: Salmon
-  ];
+  /// Warm-neutral luminosity progression for each of the 9 phases.
+  static final List<Color> phaseAccents = List<Color>.generate(
+    9,
+    (index) => Color.lerp(warmPhaseBase, ink, index / 8)!,
+    growable: false,
+  );
+
+  static Color inkWithOpacity(double opacity) {
+    return ink.withOpacity(opacity);
+  }
+
+  static Color hairWithOpacity([double opacity = 1]) {
+    return ink.withOpacity(0.10 * opacity);
+  }
+
+  static LinearGradient mainBackgroundGradient(double opacity) {
+    return LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color.lerp(bg, bg2, 0.42)!.withOpacity(opacity), bg, bgFloor],
+      stops: const [0, 0.58, 1],
+    );
+  }
+
+  static const List<Color> pearlGradient = [pearlTop, pearlMid, pearlLow];
 
   // Sizing functions
 
@@ -41,19 +67,19 @@ class VisualSpec {
   ///
   /// The orb takes up 68% of the smaller screen dimension.
   static double orbDiameter(double width, double height) {
-    return 0.68 * min(width, height);
+    return clamp(220.0, 0.68 * min(width, height), 420.0);
   }
 
   /// Calculates the orb center position.
   ///
   /// Centered horizontally, positioned at 46% of screen height.
   static Offset orbCenter(double width, double height) {
-    return Offset(0.5 * width, 0.46 * height);
+    return Offset(0.5 * width, 0.47 * height);
   }
 
   /// Calculates the habit arc radius based on orb diameter.
   static double habitArcRadius(double orbDiameter) {
-    return 0.62 * orbDiameter;
+    return orbDiameter * 0.5 + 26.0;
   }
 
   /// Calculates the habit arc center (same as orb center).
@@ -78,12 +104,12 @@ class VisualSpec {
 
   /// Calculates the numeral font size in idle state.
   static double idleNumeralSize(double width) {
-    return clamp(24.0, 0.080 * width, 30.0);
+    return clamp(56.0, 0.32 * width, 82.0);
   }
 
   /// Calculates the numeral font size during a session.
   static double runningNumeralSize(double width) {
-    return clamp(26.0, 0.088 * width, 32.0);
+    return clamp(38.0, 0.22 * width, 58.0);
   }
 
   /// Calculates the progress ring diameter.
@@ -93,12 +119,12 @@ class VisualSpec {
 
   /// Calculates the progress ring line width.
   static double progressRingLineWidth(double orbDiameter) {
-    return clamp(1.2, 0.015 * orbDiameter, 2.4);
+    return clamp(0.9, 0.0048 * orbDiameter, 1.8);
   }
 
   /// Calculates the levitation amplitude based on screen height.
   static double levitationAmplitude(double height) {
-    return clamp(2.0, 0.012 * height, 5.0);
+    return clamp(1.5, 0.008 * height, 4.0);
   }
 
   /// Calculates the parallax amplitude based on screen dimensions.
@@ -137,7 +163,7 @@ class VisualSpec {
   static Color phaseAccent(int phaseIndex, {bool isLuminanceReduced = false}) {
     final safeIndex = phaseIndex.clamp(0, phaseAccents.length - 1);
     final base = phaseAccents[safeIndex];
-    return isLuminanceReduced ? base.withOpacity(0.6) : base;
+    return isLuminanceReduced ? Color.lerp(base, bg, 0.22)! : base;
   }
 
   // Utility functions

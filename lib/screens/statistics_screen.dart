@@ -192,13 +192,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: VisualSpec.bg,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        foregroundColor: VisualSpec.ink,
         title: Text(
           'Statistics',
-          style: GoogleFonts.manrope(fontWeight: FontWeight.w700),
+          style: GoogleFonts.cormorantGaramond(
+            fontSize: 28,
+            fontWeight: FontWeight.w300,
+          ),
         ),
         actions: [
           IconButton(
@@ -253,7 +257,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildStatColumn('$daysCompleted', 'Days Done', accentColor),
-              _buildStatColumn('$totalDays', 'Total Days', Colors.white70),
+              _buildStatColumn(
+                '$totalDays',
+                'Total Days',
+                VisualSpec.ink.withOpacity(0.72),
+              ),
               _buildStatColumn(
                 '${completionRate.toStringAsFixed(0)}%',
                 'Success Rate',
@@ -266,7 +274,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: programProgress / 100,
-              backgroundColor: Colors.white.withOpacity(0.1),
+              backgroundColor: VisualSpec.ink.withOpacity(0.12),
               valueColor: AlwaysStoppedAnimation<Color>(accentColor),
               minHeight: 8,
             ),
@@ -274,7 +282,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           const SizedBox(height: 8),
           Text(
             '${programProgress.toStringAsFixed(1)}% of 1000 days',
-            style: GoogleFonts.manrope(fontSize: 12, color: Colors.white54),
+            style: GoogleFonts.manrope(
+              fontSize: 12,
+              color: VisualSpec.ink.withOpacity(0.54),
+            ),
           ),
         ],
       ),
@@ -295,11 +306,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             currentStreak == 1 ? 'Day Current' : 'Days Current',
             accentColor,
           ),
-          Container(width: 1, height: 40, color: Colors.white.withOpacity(0.1)),
+          Container(width: 1, height: 40, color: VisualSpec.hairWithOpacity()),
           _buildStatColumn(
             '$longestStreak',
             longestStreak == 1 ? 'Day Best' : 'Days Best',
-            Colors.white70,
+            VisualSpec.ink.withOpacity(0.72),
           ),
         ],
       ),
@@ -319,13 +330,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           _buildStatColumn(
             '$hours',
             hours == 1 ? 'Hour' : 'Hours',
-            Colors.white,
+            VisualSpec.ink,
           ),
           const SizedBox(width: 24),
           _buildStatColumn(
             '$minutes',
             minutes == 1 ? 'Minute' : 'Minutes',
-            Colors.white70,
+            VisualSpec.ink.withOpacity(0.72),
           ),
         ],
       ),
@@ -347,7 +358,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             children: [
               Text(
                 'Day $phaseDays of $phaseTotalDays',
-                style: GoogleFonts.manrope(fontSize: 14, color: Colors.white70),
+                style: GoogleFonts.manrope(
+                  fontSize: 14,
+                  color: VisualSpec.ink.withOpacity(0.72),
+                ),
               ),
               Text(
                 '${(phaseProgress * 100).toStringAsFixed(0)}%',
@@ -364,7 +378,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: phaseProgress,
-              backgroundColor: Colors.white.withOpacity(0.1),
+              backgroundColor: VisualSpec.ink.withOpacity(0.12),
               valueColor: AlwaysStoppedAnimation<Color>(accentColor),
               minHeight: 8,
             ),
@@ -396,7 +410,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     week['week'] as String,
                     style: GoogleFonts.manrope(
                       fontSize: 13,
-                      color: Colors.white54,
+                      color: VisualSpec.ink.withOpacity(0.54),
                     ),
                   ),
                 ),
@@ -405,9 +419,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     borderRadius: BorderRadius.circular(3),
                     child: LinearProgressIndicator(
                       value: progress,
-                      backgroundColor: Colors.white.withOpacity(0.1),
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        Colors.white70,
+                      backgroundColor: VisualSpec.ink.withOpacity(0.12),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        VisualSpec.ink.withOpacity(0.72),
                       ),
                       minHeight: 6,
                     ),
@@ -419,7 +433,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   style: GoogleFonts.manrope(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white70,
+                    color: VisualSpec.ink.withOpacity(0.72),
                   ),
                 ),
               ],
@@ -435,9 +449,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF101010),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        color: VisualSpec.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: VisualSpec.hairWithOpacity()),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -446,8 +460,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             title,
             style: GoogleFonts.manrope(
               fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: Colors.white.withOpacity(0.9),
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.2,
+              color: VisualSpec.ink.withOpacity(0.86),
             ),
           ),
           const SizedBox(height: 16),
@@ -464,14 +479,20 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           value,
           style: GoogleFonts.cormorantGaramond(
             fontSize: 36,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w300,
             color: valueColor,
+            fontFeatures: const [FontFeature.tabularFigures()],
           ),
         ),
         const SizedBox(height: 4),
         Text(
           label,
-          style: GoogleFonts.manrope(fontSize: 12, color: Colors.white54),
+          style: GoogleFonts.manrope(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.1,
+            color: VisualSpec.ink.withOpacity(0.54),
+          ),
         ),
       ],
     );

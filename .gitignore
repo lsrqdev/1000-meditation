@@ -20,6 +20,7 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+design_handoff_monochrome_redesign/
 
 # IntelliJ related
 *.iml

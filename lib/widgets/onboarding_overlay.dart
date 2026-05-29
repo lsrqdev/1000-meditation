@@ -1,5 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../visual_spec.dart';
 
 /// An onboarding overlay that appears on first app launch.
 ///
@@ -21,56 +25,77 @@ class OnboardingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.7),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withOpacity(0.12), width: 1),
-        ),
+    return SizedBox.expand(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Build from 3 to 30 minutes in 1000 days.',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.manrope(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: accentColor.withOpacity(0.95),
-              ),
-            ),
-            const SizedBox(height: 12),
-            _buildInstructionRow(
-              icon: Icons.touch_app,
-              text: 'Tap the orb to begin your session',
-            ),
-            const SizedBox(height: 8),
-            _buildInstructionRow(
-              icon: Icons.touch_app_outlined,
-              text: 'Long-press for menu',
-            ),
-            const SizedBox(height: 16),
-            TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: accentColor.withOpacity(0.2),
-                foregroundColor: accentColor.withOpacity(0.95),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 10,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              onPressed: onDismiss,
-              child: Text(
-                'Got it',
-                style: GoogleFonts.manrope(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                color: VisualSpec.bgFloor.withOpacity(0.78),
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 380),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Build from 3 to 30 minutes over 1000 days.',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.cormorantGaramond(
+                            fontSize: 35,
+                            height: 1.04,
+                            fontWeight: FontWeight.w300,
+                            color: VisualSpec.ink.withOpacity(0.96),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Container(
+                          width: 56,
+                          height: 1,
+                          color: VisualSpec.hairWithOpacity(1.8),
+                        ),
+                        const SizedBox(height: 24),
+                        _buildInstructionRow(
+                          icon: Icons.touch_app_outlined,
+                          text: 'Tap the orb to begin',
+                        ),
+                        const SizedBox(height: 12),
+                        _buildInstructionRow(
+                          icon: Icons.touch_app_outlined,
+                          text: 'Long-press for menu',
+                        ),
+                        const SizedBox(height: 28),
+                        SizedBox(
+                          width: double.infinity,
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              backgroundColor: VisualSpec.ink.withOpacity(0.94),
+                              foregroundColor: VisualSpec.bg,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 15,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                            ),
+                            onPressed: onDismiss,
+                            child: Text(
+                              'Begin',
+                              style: GoogleFonts.manrope(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                                letterSpacing: 0.18,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -84,14 +109,17 @@ class OnboardingOverlay extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: Colors.white.withOpacity(0.7)),
-        const SizedBox(width: 8),
-        Text(
-          text,
-          style: GoogleFonts.manrope(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: Colors.white.withOpacity(0.85),
+        Icon(icon, size: 18, color: VisualSpec.ink.withOpacity(0.72)),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            softWrap: true,
+            style: GoogleFonts.manrope(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: VisualSpec.ink.withOpacity(0.82),
+            ),
           ),
         ),
       ],

@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/program_model.dart';
 import '../painters/painters.dart';
 import '../services/services.dart';
-import '../services/session_controller.dart';
 import '../utils/date_helpers.dart';
 import '../visual_spec.dart';
 import '../week_dots_arc_view.dart';
@@ -160,7 +160,7 @@ class _MainScreenState extends State<MainScreen>
     final isLuminanceReduced = MediaQuery.of(context).highContrast;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: VisualSpec.bg,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -243,15 +243,12 @@ class _MainScreenState extends State<MainScreen>
                 child: Stack(
                   children: [
                     // Background gradient
-                    _buildBackgroundGradient(
-                      orbCenter,
-                      orbDiameter,
-                      accentColor,
-                      backgroundOpacity,
-                    ),
+                    _buildBackgroundGradient(backgroundOpacity),
 
                     // Film grain overlay
                     _buildFilmGrain(),
+
+                    _buildTopBar(),
 
                     // Ambient glow
                     _buildAmbientGlow(
@@ -321,6 +318,13 @@ class _MainScreenState extends State<MainScreen>
                       ),
                     ),
 
+                    _buildProgramLabel(
+                      orbCenter,
+                      orbDiameter,
+                      programDayIndex,
+                      phaseIndex + 1,
+                    ),
+
                     // Onboarding overlay
                     if (!_hasSeenOnboarding)
                       OnboardingOverlay(
@@ -340,22 +344,17 @@ class _MainScreenState extends State<MainScreen>
     );
   }
 
-  Widget _buildBackgroundGradient(
-    Offset orbCenter,
-    double orbDiameter,
-    Color accentColor,
-    double opacity,
-  ) {
+  Widget _buildBackgroundGradient(double opacity) {
     return Positioned.fill(
       child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: RadialGradient(
-            center: const Alignment(-0.25, -0.9),
-            radius: 1.35,
+            center: const Alignment(-0.3, -0.92),
+            radius: 1.42,
             colors: [
-              accentColor.withOpacity(0.18 * opacity),
-              const Color(0xFF07090A),
-              Colors.black,
+              VisualSpec.ink.withOpacity(0.05 * opacity),
+              VisualSpec.bg2,
+              VisualSpec.bgFloor,
             ],
             stops: const [0.0, 0.56, 1.0],
           ),
@@ -393,8 +392,8 @@ class _MainScreenState extends State<MainScreen>
             shape: BoxShape.circle,
             gradient: RadialGradient(
               colors: [
-                accentColor.withOpacity(0.22),
-                Colors.black.withOpacity(0),
+                VisualSpec.ink.withOpacity(0.14),
+                VisualSpec.bg.withOpacity(0),
               ],
               stops: const [0.0, 1.0],
             ),
@@ -440,7 +439,7 @@ class _MainScreenState extends State<MainScreen>
     return Positioned(
       left: 0,
       right: 0,
-      top: 6.0,
+      top: 62.0,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -455,6 +454,36 @@ class _MainScreenState extends State<MainScreen>
             text: _phaseBadgeText,
             accentColor: accentColor,
             visible: _showPhaseBadge,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Positioned(
+      left: 20,
+      right: 12,
+      top: 8,
+      child: Row(
+        children: [
+          Text(
+            '1000',
+            style: GoogleFonts.cormorantGaramond(
+              fontSize: 24,
+              fontWeight: FontWeight.w300,
+              color: VisualSpec.ink.withOpacity(0.94),
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+          const Spacer(),
+          IconButton(
+            tooltip: 'Settings',
+            onPressed: _openMenu,
+            icon: Icon(
+              Icons.more_horiz,
+              color: VisualSpec.ink.withOpacity(0.78),
+            ),
           ),
         ],
       ),
@@ -476,6 +505,29 @@ class _MainScreenState extends State<MainScreen>
     if (showCompletionCopy) return 'See you tomorrow.';
     if (showMenuHint) return 'Hold for menu.';
     return null;
+  }
+
+  Widget _buildProgramLabel(
+    Offset orbCenter,
+    double orbDiameter,
+    int programDayIndex,
+    int phaseNumber,
+  ) {
+    return Positioned(
+      left: 0,
+      right: 0,
+      top: orbCenter.dy + orbDiameter * 0.57,
+      child: Text(
+        'DAY $programDayIndex · PHASE $phaseNumber',
+        textAlign: TextAlign.center,
+        style: GoogleFonts.manrope(
+          fontSize: 10.5,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 2.2,
+          color: VisualSpec.ink.withOpacity(0.58),
+        ),
+      ),
+    );
   }
 
   // Actions
@@ -509,9 +561,9 @@ class _MainScreenState extends State<MainScreen>
 
     await showModalBottomSheet<void>(
       context: context,
-      backgroundColor: const Color(0xFF101010),
+      backgroundColor: VisualSpec.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
       ),
       builder: (context) => _buildEnhancedMenuSheet(),
     );
@@ -533,13 +585,26 @@ class _MainScreenState extends State<MainScreen>
         padding: const EdgeInsets.only(bottom: 12),
         children: [
           // Header
-          Container(
-            margin: const EdgeInsets.only(top: 8, bottom: 16),
-            width: 36,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(2),
+          Align(
+            child: Container(
+              margin: const EdgeInsets.only(top: 10, bottom: 14),
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: VisualSpec.ink.withOpacity(0.18),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+            child: Text(
+              'Settings',
+              style: GoogleFonts.cormorantGaramond(
+                fontSize: 28,
+                fontWeight: FontWeight.w300,
+                color: VisualSpec.ink.withOpacity(0.94),
+              ),
             ),
           ),
 
@@ -658,7 +723,7 @@ class _MainScreenState extends State<MainScreen>
               icon: Icons.weekend_outlined,
               title: 'Use Rest Day',
               subtitle: 'Take a break without breaking streak',
-              iconColor: Colors.green.shade300,
+              iconColor: VisualSpec.ink.withOpacity(0.78),
               onTap: () {
                 Navigator.pop(context);
                 _useRestDay();
@@ -671,7 +736,7 @@ class _MainScreenState extends State<MainScreen>
               icon: Icons.ac_unit,
               title: 'Freeze Streak',
               subtitle: '$_freezeStreaksRemaining remaining',
-              iconColor: Colors.blue.shade300,
+              iconColor: VisualSpec.ink.withOpacity(0.78),
               onTap: () {
                 Navigator.pop(context);
                 _showFreezeStreakDialog();
@@ -696,8 +761,8 @@ class _MainScreenState extends State<MainScreen>
           _MenuItem(
             icon: Icons.restart_alt,
             title: 'Reset Program',
-            textColor: Colors.red.shade300,
-            iconColor: Colors.red.shade300,
+            textColor: VisualSpec.danger,
+            iconColor: VisualSpec.danger,
             onTap: () {
               Navigator.pop(context);
               _confirmReset();
@@ -718,9 +783,9 @@ class _MainScreenState extends State<MainScreen>
   Future<void> _showSoundscapePicker() async {
     await showModalBottomSheet<void>(
       context: context,
-      backgroundColor: const Color(0xFF101010),
+      backgroundColor: VisualSpec.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
       ),
       builder: (context) => SafeArea(
         child: Column(
@@ -738,7 +803,9 @@ class _MainScreenState extends State<MainScreen>
               return ListTile(
                 leading: Icon(
                   isSelected ? Icons.check_circle : Icons.circle_outlined,
-                  color: isSelected ? Colors.teal : Colors.white54,
+                  color: isSelected
+                      ? VisualSpec.ink
+                      : VisualSpec.ink.withOpacity(0.52),
                 ),
                 title: Text(entry.value),
                 onTap: () {
@@ -783,7 +850,7 @@ class _MainScreenState extends State<MainScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF101010),
+        backgroundColor: VisualSpec.surface,
         title: const Text('Freeze Streak?'),
         content: Text(
           'Freezing your streak protects it from breaking today. '
@@ -927,7 +994,7 @@ class _MainScreenState extends State<MainScreen>
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF101010),
+        backgroundColor: VisualSpec.surface,
         title: const Text('Time for today\'s session'),
         content: const Text('Tap to start your session now.'),
         actions: [
@@ -956,7 +1023,7 @@ class _MainScreenState extends State<MainScreen>
       showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
-          backgroundColor: const Color(0xFF101010),
+          backgroundColor: VisualSpec.surface,
           title: const Text('Enable Notifications'),
           content: const Text(
             'Allow notifications in Settings to receive daily reminders.',
@@ -1021,7 +1088,7 @@ class _MainScreenState extends State<MainScreen>
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF101010),
+        backgroundColor: VisualSpec.surface,
         title: const Text('Reset Program?'),
         content: const Text('This clears completions and starts Day 1 today.'),
         actions: [
@@ -1085,7 +1152,7 @@ class _MainScreenState extends State<MainScreen>
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF101010),
+        backgroundColor: VisualSpec.surface,
         title: const Text('1000'),
         content: Text(
           'Build from 3 to 30 minutes in 1000 days.\n\n'
@@ -1191,14 +1258,14 @@ class _MenuItem extends StatelessWidget {
       leading: Icon(
         icon,
         size: 22,
-        color: iconColor ?? Colors.white.withOpacity(0.7),
+        color: iconColor ?? VisualSpec.ink.withOpacity(0.68),
       ),
       title: Text(
         title,
         style: TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w600,
-          color: textColor ?? Colors.white.withOpacity(0.9),
+          color: textColor ?? VisualSpec.ink.withOpacity(0.90),
         ),
       ),
       subtitle: subtitle != null
@@ -1206,7 +1273,7 @@ class _MenuItem extends StatelessWidget {
               subtitle!,
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.white.withOpacity(0.5),
+                color: VisualSpec.ink.withOpacity(0.50),
               ),
             )
           : null,
@@ -1235,13 +1302,13 @@ class _MenuSwitchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(icon, size: 22, color: Colors.white.withOpacity(0.7)),
+      leading: Icon(icon, size: 22, color: VisualSpec.ink.withOpacity(0.68)),
       title: Text(
         title,
         style: TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w600,
-          color: Colors.white.withOpacity(0.9),
+          color: VisualSpec.ink.withOpacity(0.90),
         ),
       ),
       subtitle: subtitle != null
@@ -1249,14 +1316,17 @@ class _MenuSwitchTile extends StatelessWidget {
               subtitle!,
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.white.withOpacity(0.5),
+                color: VisualSpec.ink.withOpacity(0.50),
               ),
             )
           : null,
       trailing: Switch.adaptive(
         value: value,
         onChanged: onChanged,
-        activeColor: Theme.of(context).colorScheme.primary,
+        activeThumbColor: VisualSpec.ink,
+        activeTrackColor: VisualSpec.ink.withOpacity(0.28),
+        inactiveThumbColor: VisualSpec.ink.withOpacity(0.44),
+        inactiveTrackColor: VisualSpec.ink.withOpacity(0.12),
       ),
       onTap: onTap ?? (() => onChanged(!value)),
     );

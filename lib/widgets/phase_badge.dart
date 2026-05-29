@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../visual_spec.dart';
+
 /// An animated badge that appears when unlocking a new phase.
 ///
 /// Slides down from the top with a fade-in animation and displays
@@ -35,17 +37,20 @@ class PhaseBadge extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.72),
+            color: VisualSpec.surface.withOpacity(0.74),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: accentColor.withOpacity(0.45), width: 1),
+            border: Border.all(
+              color: VisualSpec.hairWithOpacity(1.6),
+              width: 1,
+            ),
           ),
           child: Text(
             text,
             style: GoogleFonts.manrope(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: accentColor.withOpacity(0.92),
-              letterSpacing: 0.15,
+              fontSize: 10.5,
+              fontWeight: FontWeight.w600,
+              color: VisualSpec.ink.withOpacity(0.88),
+              letterSpacing: 1.8,
             ),
           ),
         ),

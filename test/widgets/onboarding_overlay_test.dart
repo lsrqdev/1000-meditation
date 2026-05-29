@@ -16,10 +16,10 @@ void main() {
       expect(find.textContaining('Build from 3 to 30 minutes'), findsOneWidget);
       expect(find.textContaining('Tap the orb'), findsOneWidget);
       expect(find.textContaining('Long-press'), findsOneWidget);
-      expect(find.text('Got it'), findsOneWidget);
+      expect(find.text('Begin'), findsOneWidget);
     });
 
-    testWidgets('calls onDismiss when Got it is tapped', (tester) async {
+    testWidgets('calls onDismiss when Begin is tapped', (tester) async {
       var dismissed = false;
 
       await tester.pumpWidget(
@@ -33,7 +33,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.text('Got it'));
+      await tester.tap(find.text('Begin'));
       expect(dismissed, true);
     });
   });

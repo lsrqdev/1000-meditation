@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../visual_spec.dart';
+
 /// A custom painter that draws a gradient ring/oval.
 ///
 /// Creates a subtle gradient ring with a linear gradient from the accent
@@ -25,9 +27,9 @@ class RingGradientPainter extends CustomPainter {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          accentColor.withOpacity(0.25),
-          Colors.white.withOpacity(0.08),
-          Colors.white.withOpacity(0),
+          VisualSpec.ink.withOpacity(0.16),
+          VisualSpec.ink.withOpacity(0.06),
+          VisualSpec.ink.withOpacity(0),
         ],
       ).createShader(rect)
       ..style = PaintingStyle.stroke
