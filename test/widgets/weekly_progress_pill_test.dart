@@ -10,6 +10,7 @@ void main() {
           home: Scaffold(
             body: WeeklyProgressPill(
               weeklyCompletions: 5,
+              weeklyTargetDays: 5,
               streakLength: 3,
               accentColor: Colors.teal,
             ),
@@ -30,6 +31,7 @@ void main() {
           home: Scaffold(
             body: WeeklyProgressPill(
               weeklyCompletions: 1,
+              weeklyTargetDays: 5,
               streakLength: 1,
               accentColor: Colors.teal,
             ),
@@ -46,6 +48,7 @@ void main() {
           home: Scaffold(
             body: WeeklyProgressPill(
               weeklyCompletions: 7,
+              weeklyTargetDays: 7,
               streakLength: 7,
               accentColor: Colors.teal,
             ),

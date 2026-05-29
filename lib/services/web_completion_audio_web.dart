@@ -1,0 +1,30 @@
+import 'dart:js_util' as js_util;
+
+class WebCompletionAudio {
+  static Object? get _audio =>
+      js_util.getProperty(js_util.globalThis, 'meditationAudio');
+
+  static Future<bool> unlock() async {
+    final audio = _audio;
+    if (audio == null) return false;
+
+    try {
+      final result = js_util.callMethod<Object?>(audio, 'unlock', const []);
+      if (result == null) return false;
+      return await js_util.promiseToFuture<bool>(result);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static bool playBell() {
+    final audio = _audio;
+    if (audio == null) return false;
+
+    try {
+      return js_util.callMethod<bool>(audio, 'playBell', const []);
+    } catch (_) {
+      return false;
+    }
+  }
+}

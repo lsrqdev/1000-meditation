@@ -3,19 +3,23 @@ import 'package:google_fonts/google_fonts.dart';
 
 /// A pill-shaped widget displaying weekly completion stats and current streak.
 ///
-/// Shows "This week X/7" and "Streak Y days" with accent color highlighting
+/// Shows "This week X/Y" and "Streak Y days" with accent color highlighting
 /// for the completion count.
 class WeeklyProgressPill extends StatelessWidget {
   /// Creates a weekly progress pill.
   const WeeklyProgressPill({
     super.key,
     required this.weeklyCompletions,
+    required this.weeklyTargetDays,
     required this.streakLength,
     required this.accentColor,
   });
 
-  /// Number of completed days this week (0-7).
+  /// Number of completed days this week.
   final int weeklyCompletions;
+
+  /// Number of elapsed days in the current week.
+  final int weeklyTargetDays;
 
   /// Current consecutive day streak.
   final int streakLength;
@@ -45,7 +49,7 @@ class WeeklyProgressPill extends StatelessWidget {
           children: [
             const TextSpan(text: 'This week '),
             TextSpan(
-              text: '$weeklyCompletions/7',
+              text: '$weeklyCompletions/$weeklyTargetDays',
               style: TextStyle(color: accentColor.withOpacity(0.92)),
             ),
             const TextSpan(text: '  |  Streak '),

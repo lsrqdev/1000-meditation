@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_session/audio_session.dart';
 
+import 'web_completion_audio.dart';
+
 /// Manages ambient soundscapes for meditation sessions.
 ///
 /// Provides various ambient sounds that can play during meditation:
@@ -155,6 +157,13 @@ class SoundscapeService {
     }
   }
 
+  /// Unlocks web audio from a user gesture so completion sounds can play later.
+  Future<void> unlockForUserGesture() async {
+    if (kIsWeb) {
+      await WebCompletionAudio.unlock();
+    }
+  }
+
   /// Pauses the current soundscape.
   Future<void> pause() async {
     try {
@@ -182,6 +191,11 @@ class SoundscapeService {
     await initialize();
 
     try {
+      if (kIsWeb && WebCompletionAudio.playBell()) {
+        developer.log('Web completion bell played', name: 'SoundscapeService');
+        return;
+      }
+
       // Try to play the bell asset
       try {
         await _bellPlayer.setAsset(bellAsset);

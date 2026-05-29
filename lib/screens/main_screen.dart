@@ -184,7 +184,15 @@ class _MainScreenState extends State<MainScreen>
             final last7Completions = last7
                 .map(_completionStore.isCompleted)
                 .toList();
-            final weeklyCompletions = last7Completions.where((c) => c).length;
+            final weekStart = DateHelpers.startOfLocalDay(
+              today,
+            ).subtract(Duration(days: today.weekday - 1));
+            final weekToDate = DateHelpers.datesInRange(weekStart, today);
+            final weeklyCompletions = weekToDate
+                .map(_completionStore.isCompleted)
+                .where((completed) => completed)
+                .length;
+            final weeklyTargetDays = weekToDate.length;
             final streakLength = _calculateStreak(today, last7Completions);
             final targetMinutes = _programModel.todayTargetMinutes(today);
             final programDayIndex = _programModel.dayIndexSinceStart(today);
@@ -267,6 +275,7 @@ class _MainScreenState extends State<MainScreen>
                       orbDiameter,
                       accentColor,
                       weeklyCompletions,
+                      weeklyTargetDays,
                       streakLength,
                     ),
 
@@ -425,6 +434,7 @@ class _MainScreenState extends State<MainScreen>
     double orbDiameter,
     Color accentColor,
     int weeklyCompletions,
+    int weeklyTargetDays,
     int streakLength,
   ) {
     return Positioned(
@@ -436,6 +446,7 @@ class _MainScreenState extends State<MainScreen>
         children: [
           WeeklyProgressPill(
             weeklyCompletions: weeklyCompletions,
+            weeklyTargetDays: weeklyTargetDays,
             streakLength: streakLength,
             accentColor: accentColor,
           ),
@@ -470,6 +481,7 @@ class _MainScreenState extends State<MainScreen>
   // Actions
 
   void _handleOrbTap() {
+    unawaited(SoundscapeService.instance.unlockForUserGesture());
     _playTapCue();
     _sessionController.toggleSession();
   }

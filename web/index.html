@@ -33,6 +33,51 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+  <script>
+    window.meditationAudio = (() => {
+      const bell = new Audio('assets/assets/audio/bell.mp3');
+      bell.preload = 'auto';
+      bell.playsInline = true;
+      bell.volume = 0.7;
+
+      async function unlock() {
+        try {
+          bell.pause();
+          bell.currentTime = 0;
+          bell.volume = 0.001;
+          await bell.play();
+          bell.pause();
+          bell.currentTime = 0;
+          bell.volume = 0.7;
+          return true;
+        } catch (error) {
+          console.warn('Unable to unlock completion audio', error);
+          bell.volume = 0.7;
+          return false;
+        }
+      }
+
+      function playBell() {
+        try {
+          bell.pause();
+          bell.currentTime = 0;
+          bell.volume = 0.7;
+          const playback = bell.play();
+          if (playback && typeof playback.catch === 'function') {
+            playback.catch((error) => {
+              console.warn('Unable to play completion audio', error);
+            });
+          }
+          return true;
+        } catch (error) {
+          console.warn('Unable to play completion audio', error);
+          return false;
+        }
+      }
+
+      return { unlock, playBell };
+    })();
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
