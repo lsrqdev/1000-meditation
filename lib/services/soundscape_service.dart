@@ -148,6 +148,7 @@ class SoundscapeService {
   /// Plays the current soundscape.
   Future<void> play() async {
     if (kIsWeb) {
+      WebCompletionAudio.requestWakeLock();
       WebCompletionAudio.startSessionAudio();
     }
 
@@ -165,6 +166,7 @@ class SoundscapeService {
   void stopWebSessionAudio() {
     if (kIsWeb) {
       WebCompletionAudio.stopSessionAudio();
+      WebCompletionAudio.releaseWakeLock();
     }
   }
 

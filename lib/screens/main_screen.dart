@@ -590,6 +590,15 @@ class _MainScreenState extends State<MainScreen>
             },
           ),
 
+          _MenuItem(
+            icon: Icons.notifications_active_outlined,
+            title: 'Test Sound',
+            onTap: () {
+              unawaited(SoundscapeService.instance.unlockForUserGesture());
+              unawaited(SoundscapeService.instance.playCompletionBell());
+            },
+          ),
+
           // Haptics
           _MenuSwitchTile(
             icon: Icons.vibration_outlined,

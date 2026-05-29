@@ -39,6 +39,29 @@ class WebCompletionAudio {
     }
   }
 
+  static bool requestWakeLock() {
+    final audio = _audio;
+    if (audio == null) return false;
+
+    try {
+      js_util.callMethod<Object?>(audio, 'requestWakeLock', const []);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static bool releaseWakeLock() {
+    final audio = _audio;
+    if (audio == null) return false;
+
+    try {
+      return js_util.callMethod<bool>(audio, 'releaseWakeLock', const []);
+    } catch (_) {
+      return false;
+    }
+  }
+
   static bool playBell() {
     final audio = _audio;
     if (audio == null) return false;

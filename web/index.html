@@ -39,6 +39,8 @@
       let audioContext = null;
       let keepAliveOscillator = null;
       let keepAliveGain = null;
+      let wakeLock = null;
+      let wantsWakeLock = false;
       const bell = new Audio('assets/assets/audio/bell.mp3');
       bell.preload = 'auto';
       bell.playsInline = true;
@@ -75,6 +77,7 @@
         if (!context || keepAliveOscillator) return false;
         if (context.state !== 'running') return false;
 
+        requestWakeLock();
         keepAliveOscillator = context.createOscillator();
         keepAliveGain = context.createGain();
         keepAliveOscillator.type = 'sine';
@@ -133,6 +136,39 @@
         });
 
         window.setTimeout(stopSessionAudio, 1600);
+        window.setTimeout(releaseWakeLock, 1600);
+        return true;
+      }
+
+      async function requestWakeLock() {
+        wantsWakeLock = true;
+        if (!('wakeLock' in navigator)) return false;
+
+        try {
+          if (!wakeLock) {
+            wakeLock = await navigator.wakeLock.request('screen');
+            wakeLock.addEventListener('release', () => {
+              wakeLock = null;
+              if (wantsWakeLock && document.visibilityState === 'visible') {
+                requestWakeLock();
+              }
+            });
+          }
+          return true;
+        } catch (error) {
+          console.warn('Unable to request wake lock', error);
+          return false;
+        }
+      }
+
+      function releaseWakeLock() {
+        wantsWakeLock = false;
+        if (wakeLock) {
+          wakeLock.release().catch((error) => {
+            console.warn('Unable to release wake lock', error);
+          });
+          wakeLock = null;
+        }
         return true;
       }
 
@@ -195,7 +231,20 @@
         );
       });
 
-      return { unlock, startSessionAudio, stopSessionAudio, playBell };
+      document.addEventListener('visibilitychange', () => {
+        if (wantsWakeLock && document.visibilityState === 'visible') {
+          requestWakeLock();
+        }
+      });
+
+      return {
+        unlock,
+        startSessionAudio,
+        stopSessionAudio,
+        requestWakeLock,
+        releaseWakeLock,
+        playBell
+      };
     })();
   </script>
   <script src="flutter_bootstrap.js" async></script>

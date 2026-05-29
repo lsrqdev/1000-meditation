@@ -5,5 +5,9 @@ class WebCompletionAudio {
 
   static bool stopSessionAudio() => false;
 
+  static bool requestWakeLock() => false;
+
+  static bool releaseWakeLock() => false;
+
   static bool playBell() => false;
 }
