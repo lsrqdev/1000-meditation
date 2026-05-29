@@ -35,29 +35,93 @@
 <body>
   <script>
     window.meditationAudio = (() => {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const audioContext = AudioContext ? new AudioContext() : null;
       const bell = new Audio('assets/assets/audio/bell.mp3');
       bell.preload = 'auto';
       bell.playsInline = true;
       bell.volume = 0.7;
 
+      let unlocked = false;
+
+      async function unlockContext() {
+        if (!audioContext) return false;
+        if (audioContext.state !== 'running') {
+          await audioContext.resume();
+        }
+
+        const buffer = audioContext.createBuffer(1, 1, audioContext.sampleRate);
+        const source = audioContext.createBufferSource();
+        source.buffer = buffer;
+        source.connect(audioContext.destination);
+        source.start(0);
+        unlocked = true;
+        return true;
+      }
+
+      function playWebAudioBell() {
+        if (!audioContext || audioContext.state !== 'running') return false;
+
+        const now = audioContext.currentTime;
+        const master = audioContext.createGain();
+        master.gain.setValueAtTime(0.0001, now);
+        master.gain.exponentialRampToValueAtTime(0.22, now + 0.02);
+        master.gain.exponentialRampToValueAtTime(0.0001, now + 1.25);
+        master.connect(audioContext.destination);
+
+        [
+          [660, 0],
+          [990, 0.08],
+          [1320, 0.16],
+        ].forEach(([frequency, offset]) => {
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(frequency, now + offset);
+          gain.gain.setValueAtTime(0.0001, now + offset);
+          gain.gain.exponentialRampToValueAtTime(0.45, now + offset + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.85);
+          oscillator.connect(gain);
+          gain.connect(master);
+          oscillator.start(now + offset);
+          oscillator.stop(now + offset + 0.9);
+        });
+
+        return true;
+      }
+
       async function unlock() {
+        let didUnlock = false;
+
         try {
+          didUnlock = await unlockContext();
+        } catch (error) {
+          console.warn('Unable to unlock Web Audio', error);
+        }
+
+        try {
+          bell.muted = true;
           bell.pause();
           bell.currentTime = 0;
-          bell.volume = 0.001;
           await bell.play();
           bell.pause();
           bell.currentTime = 0;
+          bell.muted = false;
           bell.volume = 0.7;
-          return true;
+          didUnlock = true;
         } catch (error) {
           console.warn('Unable to unlock completion audio', error);
+          bell.muted = false;
           bell.volume = 0.7;
-          return false;
         }
+
+        unlocked = unlocked || didUnlock;
+        return unlocked;
       }
 
       function playBell() {
+        if (playWebAudioBell()) return true;
+
         try {
           bell.pause();
           bell.currentTime = 0;
@@ -74,6 +138,16 @@
           return false;
         }
       }
+
+      ['pointerdown', 'touchstart', 'click'].forEach((eventName) => {
+        window.addEventListener(
+          eventName,
+          () => {
+            if (!unlocked) unlock();
+          },
+          { capture: true, once: false, passive: true }
+        );
+      });
 
       return { unlock, playBell };
     })();
