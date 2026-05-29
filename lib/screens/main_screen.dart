@@ -516,7 +516,7 @@ class _MainScreenState extends State<MainScreen>
     return Positioned(
       left: 0,
       right: 0,
-      top: orbCenter.dy + orbDiameter * 0.57,
+      top: orbCenter.dy + orbDiameter * 0.64,
       child: Text(
         'DAY $programDayIndex · PHASE $phaseNumber',
         textAlign: TextAlign.center,
