@@ -205,6 +205,7 @@ class SessionController extends ChangeNotifier {
       _completionHold = false;
       _completedTodayNotice = false;
       _fiftyPercentMilestoneReached = false;
+      SoundscapeService.instance.stopWebSessionAudio();
       if (userInitiated) {
         LoggingService.instance.info(
           'Session cancelled by user',

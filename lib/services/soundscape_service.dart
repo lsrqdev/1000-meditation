@@ -147,6 +147,10 @@ class SoundscapeService {
 
   /// Plays the current soundscape.
   Future<void> play() async {
+    if (kIsWeb) {
+      WebCompletionAudio.startSessionAudio();
+    }
+
     if (_currentSoundscape == 'silence') return;
 
     try {
@@ -154,6 +158,13 @@ class SoundscapeService {
       developer.log('Soundscape playing', name: 'SoundscapeService');
     } catch (e) {
       developer.log('Error playing soundscape: $e', name: 'SoundscapeService');
+    }
+  }
+
+  /// Stops web-only session audio when a session is cancelled before completion.
+  void stopWebSessionAudio() {
+    if (kIsWeb) {
+      WebCompletionAudio.stopSessionAudio();
     }
   }
 

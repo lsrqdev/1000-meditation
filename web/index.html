@@ -36,7 +36,9 @@
   <script>
     window.meditationAudio = (() => {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
-      const audioContext = AudioContext ? new AudioContext() : null;
+      let audioContext = null;
+      let keepAliveOscillator = null;
+      let keepAliveGain = null;
       const bell = new Audio('assets/assets/audio/bell.mp3');
       bell.preload = 'auto';
       bell.playsInline = true;
@@ -44,38 +46,81 @@
 
       let unlocked = false;
 
+      function getAudioContext() {
+        if (!AudioContext) return null;
+        if (!audioContext) {
+          audioContext = new AudioContext();
+        }
+        return audioContext;
+      }
+
       async function unlockContext() {
-        if (!audioContext) return false;
-        if (audioContext.state !== 'running') {
-          await audioContext.resume();
+        const context = getAudioContext();
+        if (!context) return false;
+        if (context.state !== 'running') {
+          await context.resume();
         }
 
-        const buffer = audioContext.createBuffer(1, 1, audioContext.sampleRate);
-        const source = audioContext.createBufferSource();
+        const buffer = context.createBuffer(1, 1, context.sampleRate);
+        const source = context.createBufferSource();
         source.buffer = buffer;
-        source.connect(audioContext.destination);
+        source.connect(context.destination);
         source.start(0);
         unlocked = true;
         return true;
       }
 
-      function playWebAudioBell() {
-        if (!audioContext || audioContext.state !== 'running') return false;
+      function startSessionAudio() {
+        const context = getAudioContext();
+        if (!context || keepAliveOscillator) return false;
+        if (context.state !== 'running') return false;
 
-        const now = audioContext.currentTime;
-        const master = audioContext.createGain();
+        keepAliveOscillator = context.createOscillator();
+        keepAliveGain = context.createGain();
+        keepAliveOscillator.type = 'sine';
+        keepAliveOscillator.frequency.setValueAtTime(18, context.currentTime);
+        keepAliveGain.gain.setValueAtTime(0.00001, context.currentTime);
+        keepAliveOscillator.connect(keepAliveGain);
+        keepAliveGain.connect(context.destination);
+        keepAliveOscillator.start();
+        return true;
+      }
+
+      function stopSessionAudio() {
+        try {
+          if (keepAliveOscillator) {
+            keepAliveOscillator.stop();
+            keepAliveOscillator.disconnect();
+          }
+          if (keepAliveGain) {
+            keepAliveGain.disconnect();
+          }
+        } catch (error) {
+          console.warn('Unable to stop session audio keepalive', error);
+        } finally {
+          keepAliveOscillator = null;
+          keepAliveGain = null;
+        }
+      }
+
+      function playWebAudioBell() {
+        const context = getAudioContext();
+        if (!context || context.state !== 'running') return false;
+
+        const now = context.currentTime;
+        const master = context.createGain();
         master.gain.setValueAtTime(0.0001, now);
         master.gain.exponentialRampToValueAtTime(0.22, now + 0.02);
         master.gain.exponentialRampToValueAtTime(0.0001, now + 1.25);
-        master.connect(audioContext.destination);
+        master.connect(context.destination);
 
         [
           [660, 0],
           [990, 0.08],
           [1320, 0.16],
         ].forEach(([frequency, offset]) => {
-          const oscillator = audioContext.createOscillator();
-          const gain = audioContext.createGain();
+          const oscillator = context.createOscillator();
+          const gain = context.createGain();
           oscillator.type = 'sine';
           oscillator.frequency.setValueAtTime(frequency, now + offset);
           gain.gain.setValueAtTime(0.0001, now + offset);
@@ -87,6 +132,7 @@
           oscillator.stop(now + offset + 0.9);
         });
 
+        window.setTimeout(stopSessionAudio, 1600);
         return true;
       }
 
@@ -149,7 +195,7 @@
         );
       });
 
-      return { unlock, playBell };
+      return { unlock, startSessionAudio, stopSessionAudio, playBell };
     })();
   </script>
   <script src="flutter_bootstrap.js" async></script>

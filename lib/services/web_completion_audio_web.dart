@@ -17,6 +17,28 @@ class WebCompletionAudio {
     }
   }
 
+  static bool startSessionAudio() {
+    final audio = _audio;
+    if (audio == null) return false;
+
+    try {
+      return js_util.callMethod<bool>(audio, 'startSessionAudio', const []);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static bool stopSessionAudio() {
+    final audio = _audio;
+    if (audio == null) return false;
+
+    try {
+      return js_util.callMethod<bool>(audio, 'stopSessionAudio', const []);
+    } catch (_) {
+      return false;
+    }
+  }
+
   static bool playBell() {
     final audio = _audio;
     if (audio == null) return false;
